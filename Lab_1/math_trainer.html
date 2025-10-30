@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тренажер по математике - Подготовка к КР</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            width: 100%;
+            padding: 30px;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: white;
+            border-radius: 15px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            min-width: 120px;
+            margin: 5px;
+            border: 2px solid #e9ecef;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #495057;
+        }
+
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .menu {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .menu-button {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 20px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .menu-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .menu-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .menu-button:hover::before {
+            left: 100%;
+        }
+
+        .problem-area {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            border-left: 5px solid #007bff;
+            display: none;
+        }
+
+        .problem-area.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .problem-title {
+            font-size: 1.3rem;
+            color: #007bff;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .problem-text {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            color: #495057;
+        }
+
+        .input-group {
+            margin: 15px 0;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #495057;
+        }
+
+        .input-group input {
+            width: 100%;
+            max-width: 200px;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            min-width: 100px;
+        }
+
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .result {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-weight: bold;
+            text-align: center;
+            animation: pulse 0.5s ease-in-out;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .result.correct {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            color: #155724;
+        }
+
+        .result.incorrect {
+            background: #f8d7da;
+            border: 2px solid #dc3545;
+            color: #721c24;
+        }
+
+        .hint {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            color: #856404;
+        }
+
+        .achievements {
+            background: #e2f3ff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .achievement {
+            background: #007bff;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            margin: 5px;
+            font-size: 0.9rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #28a745, #20c997);
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 20px; }
+            .header h1 { font-size: 1.5rem; }
+            .stats { flex-direction: column; }
+            .menu { grid-template-columns: 1fr; }
+        }
+
+        .timer {
+            font-size: 1.2rem;
+            color: #dc3545;
+            font-weight: bold;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .quick-mode {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+        }
+
+        .streak-indicator {
+            display: inline-block;
+            margin-left: 10px;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Тренажер по математике</h1>
+            <p>Подготовка к контрольной работе</p>
+        </div>
+
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-value" id="score">0</div>
+                <div class="stat-label">💯 Очки</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="level">1</div>
+                <div class="stat-label">⭐ Уровень</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="streak">0</div>
+                <div class="stat-label">🔥 Серия</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="accuracy">0%</div>
+                <div class="stat-label">📊 Точность</div>
+            </div>
+        </div>
+
+        <div id="menu" class="menu">
+            <button class="menu-button" onclick="startProblemType(1)">
+                📋 Программы вычислений<br><small>Алгоритмы и последовательности</small>
+            </button>
+            <button class="menu-button" onclick="startProblemType(2)">
+                🔢 Порядок действий<br><small>Выражения со скобками</small>
+            </button>
+            <button class="menu-button" onclick="startProblemType(3)">
+                ⚖️ Пропорции<br><small>Задачи "во сколько раз"</small>
+            </button>
+            <button class="menu-button" onclick="startProblemType(4)">
+                📈 Степени чисел<br><small>Вычисление степеней</small>
+            </button>
+            <button class="menu-button" onclick="startProblemType(5)">
+                🧮 Выражения со степенями<br><small>Комбинированные задачи</small>
+            </button>
+            <button class="menu-button quick-mode" onclick="startQuickMode()">
+                ⚡ Быстрая тренировка<br><small>5 задач на время</small>
+            </button>
+            <button class="menu-button" onclick="showStats()">
+                📊 Статистика<br><small>Мой прогресс</small>
+            </button>
+            <button class="menu-button" onclick="startRandomProblem()">
+                🎲 Случайная задача<br><small>Любой тип</small>
+            </button>
+        </div>
+
+        <div id="problem-area" class="problem-area">
+            <div class="problem-title" id="problem-title"></div>
+            <div class="problem-text" id="problem-text"></div>
+            <div id="problem-inputs"></div>
+            <div class="button-group">
+                <button class="btn btn-primary" id="check-btn" onclick="checkAnswer()">Проверить</button>
+                <button class="btn btn-warning" onclick="getHint()">💡 Подсказка</button>
+                <button class="btn btn-secondary" onclick="backToMenu()">🔙 Назад</button>
+            </div>
+            <div id="result"></div>
+            <div id="hint"></div>
+        </div>
+
+        <div id="quick-mode-area" class="problem-area">
+            <div class="problem-title">⚡ Быстрая тренировка</div>
+            <div class="timer" id="timer"></div>
+            <div class="problem-text" id="quick-problem-text"></div>
+            <div id="quick-problem-inputs"></div>
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="checkQuickAnswer()">Ответ</button>
+                <button class="btn btn-secondary" onclick="backToMenu()">🔙 Назад</button>
+            </div>
+            <div id="quick-result"></div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="quick-progress" style="width: 0%">0/5</div>
+            </div>
+        </div>
+
+        <div id="achievements" class="achievements" style="display: none;">
+            <h3>🏅 Ваши достижения:</h3>
+            <div id="achievements-list"></div>
+        </div>
+    </div>
+
+    <script>
+        class MathGame {
+            constructor() {
+                this.score = 0;
+                this.level = 1;
+                this.streak = 0;
+                this.maxStreak = 0;
+                this.totalProblems = 0;
+                this.correctAnswers = 0;
+                this.achievements = [];
+                this.currentProblem = null;
+                this.hintCount = 0;
+
+                // Быстрый режим
+                this.quickMode = {
+                    active: false,
+                    currentProblem: 0,
+                    totalProblems: 5,
+                    correctCount: 0,
+                    startTime: null
+                };
+
+                this.updateDisplay();
+            }
+
+            updateDisplay() {
+                document.getElementById('score').textContent = this.score;
+                document.getElementById('level').textContent = this.level;
+                document.getElementById('streak').textContent = this.streak;
+
+                const accuracy = this.totalProblems > 0 
+                    ? Math.round((this.correctAnswers / this.totalProblems) * 100) 
+                    : 0;
+                document.getElementById('accuracy').textContent = accuracy + '%';
+
+                // Проверка уровня
+                if (this.score >= this.level * 100) {
+                    this.level++;
+                    this.showResult(`🎊 НОВЫЙ УРОВЕНЬ ${this.level}!`, 'correct');
+                }
+            }
+
+            addAchievement(name) {
+                if (!this.achievements.includes(name)) {
+                    this.achievements.push(name);
+                    this.showResult(`🏅 Достижение: ${name}!`, 'correct');
+                    this.showAchievements();
+                }
+            }
+
+            showAchievements() {
+                const container = document.getElementById('achievements');
+                const list = document.getElementById('achievements-list');
+
+                if (this.achievements.length > 0) {
+                    container.style.display = 'block';
+                    list.innerHTML = this.achievements.map(ach => 
+                        `<span class="achievement">⭐ ${ach}</span>`
+                    ).join('');
+                }
+            }
+
+            checkAnswer(isCorrect, correctAnswer = '') {
+                this.totalProblems++;
+
+                if (isCorrect) {
+                    this.correctAnswers++;
+                    this.streak++;
+                    this.maxStreak = Math.max(this.maxStreak, this.streak);
+
+                    let points = 10 + Math.floor(this.streak / 3) * 5;
+                    this.score += points;
+
+                    let message = `✅ ПРАВИЛЬНО! +${points} очков`;
+
+                    if (this.streak === 3) {
+                        message += ' 🔥 Серия 3!';
+                    } else if (this.streak === 5) {
+                        message += ' 🔥🔥 Серия 5!';
+                        this.addAchievement('Мастер вычислений');
+                    } else if (this.streak === 10) {
+                        message += ' 🔥🔥🔥 Серия 10!';
+                        this.addAchievement('Математический гений');
+                    }
+
+                    this.showResult(message, 'correct');
+                } else {
+                    if (this.streak > 0) {
+                        this.showResult(`❌ Неправильно. Ответ: ${correctAnswer}\n💔 Серия прервана на ${this.streak}`, 'incorrect');
+                    } else {
+                        this.showResult(`❌ Неправильно. Правильный ответ: ${correctAnswer}`, 'incorrect');
+                    }
+                    this.streak = 0;
+                }
+
+                this.updateDisplay();
+            }
+
+            showResult(message, type) {
+                const result = document.getElementById('result');
+                result.innerHTML = message.replace(/\n/g, '<br>');
+                result.className = `result ${type}`;
+                result.style.display = 'block';
+            }
+
+            // Задача 1: Программы вычислений
+            createProgramProblem() {
+                const num1 = Math.floor(Math.random() * 90000) + 10000;
+                const divisor1 = Math.floor(Math.random() * 900) + 100;
+                const num2 = Math.floor(Math.random() * 900) + 100;
+                const multiplier = Math.floor(Math.random() * 90) + 10;
+
+                const result1 = num1 / divisor1;
+                const result2 = num2 * multiplier;
+                const correct = result1 + result2;
+
+                return {
+                    title: "📋 Программа вычислений",
+                    text: `Составьте выражение по программе:<br><br>
+                           1. Разделить ${num1} на ${divisor1}<br>
+                           2. ${num2} умножить на ${multiplier}<br>
+                           3. Сложить результаты команд 1 и 2<br><br>
+                           💡 Выражение: (${num1} ÷ ${divisor1}) + (${num2} × ${multiplier})`,
+                    inputs: `<div class="input-group">
+                                <label>Результат программы:</label>
+                                <input type="number" id="answer" step="0.01" placeholder="Введите ответ">
+                             </div>`,
+                    correct: correct,
+                    check: function() {
+                        const answer = parseFloat(document.getElementById('answer').value);
+                        return Math.abs(answer - correct) < 0.01;
+                    }
+                };
+            }
+
+            // Задача 2: Порядок действий
+            createOrderProblem() {
+                const a = Math.floor(Math.random() * 41) + 10;
+                const b = Math.floor(Math.random() * 41) + 10;
+                const c = Math.floor(Math.random() * 41) + 10;
+                const d = Math.floor(Math.random() * 41) + 10;
+                const e = Math.floor(Math.random() * 9) + 2;
+                const f = Math.floor(Math.random() * 9) + 2;
+                const g = Math.floor(Math.random() * 9) + 2;
+
+                const result1 = a * b + c * d;
+                const result2 = Math.floor((e * f) / e) - Math.floor((g * (f-1)) / g);
+                const correct = result1 - result2;
+
+                return {
+                    title: "🔢 Порядок действий",
+                    text: `Вычислите выражение:<br><br>
+                           <strong>(${a} · ${b} + ${c} · ${d}) - (${e * f} : ${e} - ${g * (f-1)} : ${g})</strong><br><br>
+                           💡 Помните: сначала скобки, потом умножение/деление, затем сложение/вычитание`,
+                    inputs: `<div class="input-group">
+                                <label>Результат:</label>
+                                <input type="number" id="answer" placeholder="Введите ответ">
+                             </div>`,
+                    correct: correct,
+                    check: function() {
+                        const answer = parseInt(document.getElementById('answer').value);
+                        return answer === correct;
+                    }
+                };
+            }
+
+            // Задача 3: Пропорции
+            createProportionProblem() {
+                const types = [
+                    { total: 189, ratio: 8, type: "больше" },
+                    { total: 216, ratio: 7, type: "больше" },
+                    { total: 378, ratio: 5, type: "меньше" },
+                    { total: 432, ratio: 8, type: "меньше" }
+                ];
+
+                const problem = types[Math.floor(Math.random() * types.length)];
+                const smaller = Math.floor(problem.total / (problem.ratio + 1));
+                const larger = smaller * problem.ratio;
+
+                return {
+                    title: "⚖️ Пропорции и уравнения",
+                    text: `Сумма двух чисел ${problem.total}.<br>
+                           Одно из них в ${problem.ratio} раз ${problem.type} другого.<br>
+                           Найдите эти числа.<br><br>
+                           💡 Подсказка: обозначьте меньшее число как x`,
+                    inputs: `<div class="input-group">
+                                <label>Меньшее число:</label>
+                                <input type="number" id="smaller" placeholder="Меньшее">
+                             </div>
+                             <div class="input-group">
+                                <label>Большее число:</label>
+                                <input type="number" id="larger" placeholder="Большее">
+                             </div>`,
+                    correct: { smaller, larger },
+                    check: function() {
+                        const ans1 = parseInt(document.getElementById('smaller').value);
+                        const ans2 = parseInt(document.getElementById('larger').value);
+                        return (ans1 === smaller && ans2 === larger);
+                    }
+                };
+            }
+
+            // Задача 4: Степени
+            createPowerProblem() {
+                const bases = [];
+                const powers = [];
+                const results = [];
+
+                for (let i = 0; i < 3; i++) {
+                    const base = Math.floor(Math.random() * 19) + 2;
+                    const power = Math.floor(Math.random() * 5) + 2;
+                    bases.push(base);
+                    powers.push(power);
+                    results.push(Math.pow(base, power));
+                }
+
+                return {
+                    title: "📈 Степени чисел",
+                    text: `Вычислите следующие степени:<br><br>
+                           1. ${bases[0]}<sup>${powers[0]}</sup><br>
+                           2. ${bases[1]}<sup>${powers[1]}</sup><br>
+                           3. ${bases[2]}<sup>${powers[2]}</sup><br><br>
+                           💡 a<sup>n</sup> означает "a умножить само на себя n раз"`,
+                    inputs: `<div class="input-group">
+                                <label>Ответ 1:</label>
+                                <input type="number" id="power1" placeholder="Первый ответ">
+                             </div>
+                             <div class="input-group">
+                                <label>Ответ 2:</label>
+                                <input type="number" id="power2" placeholder="Второй ответ">
+                             </div>
+                             <div class="input-group">
+                                <label>Ответ 3:</label>
+                                <input type="number" id="power3" placeholder="Третий ответ">
+                             </div>`,
+                    correct: results,
+                    check: function() {
+                        const ans1 = parseInt(document.getElementById('power1').value);
+                        const ans2 = parseInt(document.getElementById('power2').value);
+                        const ans3 = parseInt(document.getElementById('power3').value);
+                        return ans1 === results[0] && ans2 === results[1] && ans3 === results[2];
+                    }
+                };
+            }
+
+            // Задача 5: Выражения со степенями
+            createPowerExpressionProblem() {
+                const expressions = [
+                    () => {
+                        const a = Math.floor(Math.random() * 9) + 2;
+                        const b = Math.floor(Math.random() * 21) + 10;
+                        const correct = a*a + b;
+                        return {
+                            text: `${a}<sup>2</sup> + ${b}`,
+                            correct: correct
+                        };
+                    },
+                    () => {
+                        const a = Math.floor(Math.random() * 16) + 5;
+                        const b = Math.floor(Math.random() * 201) + 100;
+                        const correct = a*a - b;
+                        return {
+                            text: `${a}<sup>2</sup> - ${b}`,
+                            correct: correct
+                        };
+                    },
+                    () => {
+                        const a = Math.floor(Math.random() * 5) + 2;
+                        const b = Math.floor(Math.random() * 4) + 2;
+                        const c = Math.floor(Math.random() * 3) + 2;
+                        const correct = Math.pow(a, b) * (c*c);
+                        return {
+                            text: `${a}<sup>${b}</sup> · ${c}<sup>2</sup>`,
+                            correct: correct
+                        };
+                    }
+                ];
+
+                const expr = expressions[Math.floor(Math.random() * expressions.length)]();
+
+                return {
+                    title: "🧮 Выражения со степенями",
+                    text: `Вычислите выражение:<br><br>
+                           <strong>${expr.text}</strong><br><br>
+                           💡 Сначала вычислите степени, потом остальные операции`,
+                    inputs: `<div class="input-group">
+                                <label>Результат:</label>
+                                <input type="number" id="answer" placeholder="Введите ответ">
+                             </div>`,
+                    correct: expr.correct,
+                    check: function() {
+                        const answer = parseInt(document.getElementById('answer').value);
+                        return answer === expr.correct;
+                    }
+                };
+            }
+
+            startProblem(problemGenerator) {
+                this.currentProblem = problemGenerator();
+                this.hintCount = 0;
+
+                document.getElementById('menu').style.display = 'none';
+                document.getElementById('problem-area').classList.add('active');
+                document.getElementById('quick-mode-area').classList.remove('active');
+
+                document.getElementById('problem-title').innerHTML = this.currentProblem.title;
+                document.getElementById('problem-text').innerHTML = this.currentProblem.text;
+                document.getElementById('problem-inputs').innerHTML = this.currentProblem.inputs;
+                document.getElementById('result').style.display = 'none';
+                document.getElementById('hint').style.display = 'none';
+            }
+
+            // Быстрый режим
+            startQuickMode() {
+                this.quickMode.active = true;
+                this.quickMode.currentProblem = 0;
+                this.quickMode.correctCount = 0;
+                this.quickMode.startTime = Date.now();
+
+                document.getElementById('menu').style.display = 'none';
+                document.getElementById('problem-area').classList.remove('active');
+                document.getElementById('quick-mode-area').classList.add('active');
+
+                this.nextQuickProblem();
+                this.startTimer();
+            }
+
+            nextQuickProblem() {
+                if (this.quickMode.currentProblem >= this.quickMode.totalProblems) {
+                    this.endQuickMode();
+                    return;
+                }
+
+                // Генерируем простую задачу
+                const types = [
+                    () => {
+                        const a = Math.floor(Math.random() * 11) + 2;
+                        const b = Math.floor(Math.random() * 5) + 2;
+                        return {
+                            text: `${a}<sup>${b}</sup>`,
+                            answer: Math.pow(a, b)
+                        };
+                    },
+                    () => {
+                        const a = Math.floor(Math.random() * 16) + 5;
+                        const b = Math.floor(Math.random() * 16) + 5;
+                        const c = Math.floor(Math.random() * 9) + 2;
+                        return {
+                            text: `${a} · ${b} - ${c}<sup>2</sup>`,
+                            answer: a * b - c * c
+                        };
+                    },
+                    () => {
+                        const a = Math.floor(Math.random() * 41) + 10;
+                        const b = Math.floor(Math.random() * 8) + 2;
+                        return {
+                            text: `${a}<sup>2</sup> : ${b}`,
+                            answer: Math.floor((a * a) / b)
+                        };
+                    }
+                ];
+
+                const problem = types[Math.floor(Math.random() * types.length)]();
+                this.quickMode.currentAnswer = problem.answer;
+
+                document.getElementById('quick-problem-text').innerHTML = 
+                    `<strong>Задача ${this.quickMode.currentProblem + 1}/5:</strong><br><br>${problem.text}`;
+                document.getElementById('quick-problem-inputs').innerHTML = 
+                    `<div class="input-group">
+                        <input type="number" id="quick-answer" placeholder="Ваш ответ" onkeypress="if(event.key==='Enter') checkQuickAnswer()">
+                     </div>`;
+                document.getElementById('quick-result').innerHTML = '';
+
+                this.updateQuickProgress();
+
+                // Фокус на инпут
+                setTimeout(() => {
+                    document.getElementById('quick-answer').focus();
+                }, 100);
+            }
+
+            checkQuickAnswer() {
+                const answer = parseInt(document.getElementById('quick-answer').value);
+                const isCorrect = answer === this.quickMode.currentAnswer;
+
+                if (isCorrect) {
+                    this.quickMode.correctCount++;
+                    document.getElementById('quick-result').innerHTML = 
+                        `<div class="result correct">✅ Правильно!</div>`;
+                } else {
+                    document.getElementById('quick-result').innerHTML = 
+                        `<div class="result incorrect">❌ Неверно. Ответ: ${this.quickMode.currentAnswer}</div>`;
+                }
+
+                this.quickMode.currentProblem++;
+                this.updateQuickProgress();
+
+                setTimeout(() => {
+                    this.nextQuickProblem();
+                }, 1500);
+            }
+
+            updateQuickProgress() {
+                const progress = (this.quickMode.currentProblem / this.quickMode.totalProblems) * 100;
+                const progressBar = document.getElementById('quick-progress');
+                progressBar.style.width = progress + '%';
+                progressBar.textContent = `${this.quickMode.currentProblem}/${this.quickMode.totalProblems}`;
+            }
+
+            startTimer() {
+                const timerElement = document.getElementById('timer');
+                const startTime = this.quickMode.startTime;
+
+                const updateTimer = () => {
+                    if (!this.quickMode.active) return;
+
+                    const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                    const minutes = Math.floor(elapsed / 60);
+                    const seconds = elapsed % 60;
+                    timerElement.textContent = `⏱️ ${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+                    setTimeout(updateTimer, 1000);
+                };
+
+                updateTimer();
+            }
+
+            endQuickMode() {
+                this.quickMode.active = false;
+                const elapsed = (Date.now() - this.quickMode.startTime) / 1000;
+
+                let message = `🏁 Быстрая тренировка завершена!<br><br>`;
+                message += `⏱️ Время: ${elapsed.toFixed(1)} секунд<br>`;
+                message += `✅ Правильно: ${this.quickMode.correctCount}/5<br><br>`;
+
+                if (this.quickMode.correctCount === 5) {
+                    const bonus = 50;
+                    this.score += bonus;
+                    message += `🎉 Все правильно! +${bonus} бонусных очков!<br>`;
+
+                    if (elapsed < 60) {
+                        this.addAchievement('Скоростной вычислитель');
+                        message += `⚡ Менее минуты - вы скоростной вычислитель!`;
+                    }
+                }
+
+                document.getElementById('quick-result').innerHTML = 
+                    `<div class="result correct">${message}</div>`;
+
+                this.updateDisplay();
+
+                setTimeout(() => {
+                    this.backToMenu();
+                }, 3000);
+            }
+
+            getHint() {
+                this.hintCount++;
+                const hints = [
+                    "💡 Внимательно читайте условие задачи",
+                    "💡 Проверьте порядок выполнения операций",
+                    "💡 Используйте промежуточные вычисления",
+                    "💡 Не забывайте про скобки в выражениях"
+                ];
+
+                const hint = hints[Math.min(this.hintCount - 1, hints.length - 1)];
+                document.getElementById('hint').innerHTML = `<div class="hint">${hint}</div>`;
+                document.getElementById('hint').style.display = 'block';
+            }
+
+            backToMenu() {
+                document.getElementById('menu').style.display = 'grid';
+                document.getElementById('problem-area').classList.remove('active');
+                document.getElementById('quick-mode-area').classList.remove('active');
+                this.quickMode.active = false;
+            }
+
+            showStats() {
+                const accuracy = this.totalProblems > 0 
+                    ? Math.round((this.correctAnswers / this.totalProblems) * 100) 
+                    : 0;
+
+                const statsMessage = `
+                    📊 <strong>Ваша статистика:</strong><br><br>
+                    💯 Очки: ${this.score}<br>
+                    ⭐ Уровень: ${this.level}<br>
+                    🔥 Текущая серия: ${this.streak}<br>
+                    🏆 Лучшая серия: ${this.maxStreak}<br>
+                    ✅ Решено задач: ${this.correctAnswers}/${this.totalProblems}<br>
+                    📊 Точность: ${accuracy}%<br><br>
+                    ${this.achievements.length > 0 ? 
+                        `🏅 Достижения: ${this.achievements.join(', ')}` : 
+                        '🎯 Пока нет достижений - продолжайте решать!'}
+                `;
+
+                document.getElementById('result').innerHTML = statsMessage;
+                document.getElementById('result').className = 'result correct';
+                document.getElementById('result').style.display = 'block';
+
+                this.showAchievements();
+            }
+        }
+
+        // Инициализация игры
+        const game = new MathGame();
+
+        // Функции для кнопок
+        function startProblemType(type) {
+            const generators = [
+                () => game.createProgramProblem(),
+                () => game.createOrderProblem(),
+                () => game.createProportionProblem(),
+                () => game.createPowerProblem(),
+                () => game.createPowerExpressionProblem()
+            ];
+
+            game.startProblem(generators[type - 1]);
+        }
+
+        function startRandomProblem() {
+            const randomType = Math.floor(Math.random() * 5) + 1;
+            startProblemType(randomType);
+        }
+
+        function startQuickMode() {
+            game.startQuickMode();
+        }
+
+        function checkAnswer() {
+            if (!game.currentProblem) return;
+
+            const isCorrect = game.currentProblem.check();
+            let correctAnswerText = '';
+
+            if (typeof game.currentProblem.correct === 'object') {
+                correctAnswerText = `${game.currentProblem.correct.smaller} и ${game.currentProblem.correct.larger}`;
+            } else if (Array.isArray(game.currentProblem.correct)) {
+                correctAnswerText = game.currentProblem.correct.join(', ');
+            } else {
+                correctAnswerText = game.currentProblem.correct.toString();
+            }
+
+            game.checkAnswer(isCorrect, correctAnswerText);
+        }
+
+        function checkQuickAnswer() {
+            game.checkQuickAnswer();
+        }
+
+        function getHint() {
+            game.getHint();
+        }
+
+        function backToMenu() {
+            game.backToMenu();
+        }
+
+        function showStats() {
+            game.showStats();
+        }
+
+        // Обработка Enter для основных задач
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && document.getElementById('problem-area').classList.contains('active')) {
+                checkAnswer();
+            }
+        });
+    </script>
+</body>
+</html>
